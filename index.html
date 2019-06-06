@@ -1,0 +1,168 @@
+<!-- 
+		Name: Melissa Whittington
+		Date: 02/12/2019
+		Class: CSCI2447, Javascript Fundamentals
+		Project: Last week of class whack-a-mole contest.
+ -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <title>Whack-A-Mole (CSCI2447)</title>
+  <meta charset="utf-8"> 
+    <!-- CSS styles: This is for me to worry about; not you. -->
+	<link href="css/game.css" rel="stylesheet" />
+  </head>
+  <body>
+
+	<div id="content">
+
+		<h1>Whack-A-Mole</h1>
+		
+		<p>After clicking "start", you will have 30 seconds to click
+		as many moles as you can. The moles appear randomly so be ready! </p>
+		
+		<div id="controls">
+			<span id="score">0 pts</span>
+			<button type="button" id="start_button">Start!</button>
+		</div>
+		
+		<div id="timer">30 seconds left</div>
+		
+		<div id="gamespace">
+
+		
+			
+		</div>
+		
+	</div>
+
+		<script src="js/jquery-3.3.1.min.js"></script>
+		<script>
+			// Programmer: Melissa Whittington
+			// Date: 05/03/2019
+			
+			var score = 0;
+			var seconds = 30;
+			var timer;
+			var count = 0;			
+		
+		$(document).ready( function() {			
+			$('#start_button').click(function() {
+				startGame();  
+					
+			});//end start button click
+
+
+		});//end ready
+		
+		function randomXAxis() {
+			var xCoord = Math.floor(Math.random() * 477); //gamespace width of 596px minus image width of 120px is 476.
+			return xCoord;
+		};//end randomXAxis
+
+		function randomYAxis() {
+			yCoord = Math.floor(Math.random() * 295); //gamespace height of 350px minus image height of 56 is 294.
+			return yCoord;
+		};//end randomYAxis
+
+		function updateScore() {
+			score += 1;
+			$('#score').html(score + ' pts');			
+		};//end updateScore
+
+		function startGame() {
+			changeLook();
+			$('#timer').fadeIn();		
+			$('#start_button').prop('disabled', true);		
+			$('#gamespace').on('click', 'img', function() {
+				updateScore();
+				$(this).remove();
+				}); // end .on('click')
+			timer = setInterval(countDown, 1000);
+			addMole();			
+		};//end startGame
+
+		// timer that counts down and displays above #gamespace
+		function countDown() {
+			if (seconds >= 0)	{
+			$('#timer').html(seconds + ' seconds left');
+				seconds--;
+			}
+			else
+			{
+				clearInterval(timer);		
+				$('html').css('background-color', '#336699');
+				$('#gamespace').css('background-color', '#FFF');
+			}
+		};//end countDown
+
+		//handles the mole image
+		function addMole() {
+			var xAxis = randomXAxis();
+			var yAxis = randomYAxis();
+			var img = `<img src="img/mole.jpg" id="mole${count}" style="top: ${yAxis}px; left: ${xAxis}px;"/>`;
+
+			img = img.replace(`mole${count}`, `mole${++count}`);
+
+			if (seconds >= 0)
+			{
+				
+				$('#gamespace').append(img);
+				// randomly remove mole image
+				var randomSecond = Math.floor(Math.random() * 2001);
+				setTimeout(function() {$(`#mole${count}`).remove();}, randomSecond);
+
+				// randomly add mole image
+				randomSecond = Math.floor(Math.random() * 2001);
+				setTimeout(addMole, randomSecond);
+			}
+			else
+			{
+				$('img').remove();
+				if (score < 10)
+				{
+					alert("They call it little score, but in real life it's really big.\n Your 'Big' score is: " + score);
+				}
+				else
+				{
+					alert("Over that score of hand!....\n Hand over that score of " + score);
+				}
+
+				location.reload();
+			}
+
+			/*
+			var removeMoleRandom = Math.floor(Math.random() * 1);
+			var randomSecond = Math.floor(Math.random() * 2000);
+			var randomMole = Math.floor(Math.random() * (count + 1));
+			var xAxis = randomXAxis(),
+					yAxis = randomYAxis();
+			$('#gamespace').append(`<img src="img/mole.jpg" id="mole${count}" style="top: ${yAxis}px; left: ${xAxis}px;"/>`);
+			var lessMole = $(`#mole${randomMole}`).remove();
+			if (seconds >= 0)		
+			{	
+				count++
+				setTimeout(addMole, randomSecond);
+				setTimeout(lessMole, removeMoleRandom);						
+			}
+			else
+			{
+				$('img').remove();
+			}			*/
+		}; // end addMole
+
+		function changeLook() {
+			$('html').css('background-image', 'url(img/pjBackground.jpg)');
+			$('h1').html("Wasn't your mole on the other side?");
+			$('#content p').html("Maybe if you remove them in a good way so it won't look so bad.");
+			$('#content').css('background-color', 'rgba(255,174,61,1)');
+			$('#gamespace').css('background-image', 'url(img/pjFace.jpg)');
+
+		};
+
+	</script>
+	
+  </body>
+</html>
